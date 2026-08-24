@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     testImplementation(libs.junit)
-
+    implementation("org.jspecify:jspecify:1.0.0")
 }
 
 java {

@@ -1,11 +1,14 @@
 package io.github.bfur64;
 
+import org.jspecify.annotations.NullMarked;
+
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
 
+@NullMarked
 public class Playback {
     private final Clip clip;
 
@@ -25,22 +28,25 @@ public class Playback {
         });
     }
 
-    public void play(Sound sound, boolean loop) throws LineUnavailableException, IOException {
-        if (clip.isOpen()) {
-            clip.close();
+    public void play(Sound sound, boolean loop) {
+        try {
+            if (clip.isOpen()) {
+                clip.close();
+            }
+
+            available = false;
+            paused = false;
+
+            clip.open(sound.stream());
+            clip.setFramePosition(0);
+
+            if (loop) {
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            } else {
+                clip.start();
+            }
         }
-
-        available = false;
-        paused = false;
-
-        clip.open(sound.stream());
-        clip.setFramePosition(0);
-
-        if (loop) {
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        } else {
-            clip.start();
-        }
+        catch (LineUnavailableException | IOException ignored) {}
     }
 
     public void stop() {

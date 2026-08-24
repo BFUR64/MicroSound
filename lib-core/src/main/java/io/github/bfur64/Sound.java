@@ -1,5 +1,7 @@
 package io.github.bfur64;
 
+import org.jspecify.annotations.NullMarked;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -9,15 +11,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Objects;
 
+@NullMarked
 public class Sound {
     private final AudioFormat format;
     private final byte[] data;
 
     public Sound(String resourceName) throws UnsupportedAudioFileException, IOException {
         this(AudioSystem.getAudioInputStream(
-                new BufferedInputStream(
-                    Objects.requireNonNull(
-                        Sound.class.getResourceAsStream(resourceName)
+            new BufferedInputStream(
+                Objects.requireNonNull(
+                    Sound.class.getResourceAsStream(resourceName)
         ))));
     }
 
