@@ -25,7 +25,7 @@ java {
 mavenPublishing {
     coordinates(
         group.toString(),
-        "MicroSound",
+        "micro-sound",
         project.version.toString()
     )
 
