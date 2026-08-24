@@ -1,42 +1,46 @@
 package io.github.bfur64;
 
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
 
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @NullMarked
-public class MicroSound {
-    private final ArrayList<Playback> playbacks = new ArrayList<>();
+public final class MicroSound {
+    private final List<Playback> playbacks = new ArrayList<>();
 
-    public Sound load(String resourceName) throws UnsupportedAudioFileException, IOException {
+    private String error = "";
+
+    public Sound load(String resourceName) {
         return new Sound(resourceName);
     }
 
-    public @Nullable Playback play(Sound sound, boolean loop) {
-        try {
-            if (playbacks.isEmpty()) {
-                playbacks.add(new Playback());
+    public Playback play(Sound sound, boolean loop) {
+        for (Playback playback : playbacks) {
+            if (!playback.isValid()) {
+                error = playback.getError();
+                return playback;
             }
 
-            for (Playback playback : playbacks) {
-                if (playback.isAvailable()) {
-                    playback.play(sound, loop);
-                    return playback;
-                }
+            if (playback.isAvailable()) {
+                playback.play(sound, loop);
+                error = playback.getError();
+                return playback;
             }
-
-            Playback playback = new Playback();
-            playbacks.add(playback);
-            playback.play(sound, loop);
-
-            return playback;
         }
-        catch (LineUnavailableException e) {
-            return null;
+
+        Playback playback = new Playback();
+        playbacks.add(playback);
+        playback.play(sound, loop);
+
+        if (!playback.isValid()) {
+            error = playback.getError();
         }
+
+        return playback;
+    }
+
+    public String getError() {
+        return error;
     }
 }
